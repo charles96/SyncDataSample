@@ -1,12 +1,15 @@
 ﻿using System;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Hosting;
 using NLog.Extensions.Logging;
+using SyncDataSample.Repositories;
 using SyncDataSample.Service;
 
 namespace SyncDataSample
@@ -55,22 +58,16 @@ namespace SyncDataSample
                         loggingBuilder.AddNLog();
                     });
 
-                    #region Dependency Injection
-
                     var configuration = hostContext.Configuration;
 
+                    services.AddSingleton<ITableRepository, TableRepository>();
+                    services.AddSingleton<TableCacheRepository>();
                     services.AddSingleton<HttpListener>();
                     services.AddSingleton<CacheManager>();
                     services.AddHostedService<SyncService>();
                     services.AddHostedService<MainService>();
-                    
-                    // *** HostedService - ProcessService
-                    //services.AddHostedService<ProcessService>();
-                    //services.AddMemoryCache().BuildServiceProvider();
-
-                    #endregion Dependency Injection
+                    services.AddMemoryCache().BuildServiceProvider();
                 })
                 .UseNLog();
-
     }
 }

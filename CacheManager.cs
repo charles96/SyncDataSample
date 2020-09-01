@@ -15,7 +15,7 @@ namespace SyncDataSample
         public CacheManager(HttpListener httpListener)
         {
             _httpListener = httpListener;
-            _httpListener.Prefixes.Add("http://*:8888/");
+            _httpListener.Prefixes.Add("http://localhost:8888/");
             _httpListener.Start();
         }
 
@@ -39,7 +39,7 @@ namespace SyncDataSample
 
                         string methodName = ctx.Request.Url.LocalPath;
 
-                        if (!String.IsNullOrWhiteSpace(methodName))
+                        if (!String.IsNullOrWhiteSpace(methodName) && methodName.ToUpper().Trim() != "/FAVICON.ICO")
                         {
                             OnClientMessageEvent(new ClientEventArgs() { Body = methodName });
                         }
