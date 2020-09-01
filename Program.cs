@@ -1,14 +1,13 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Hosting;
 using NLog.Extensions.Logging;
+using SyncDataSample.Engine;
 using SyncDataSample.Repositories;
 using SyncDataSample.Service;
 

@@ -12,8 +12,6 @@ namespace SyncDataSample.Repositories
         readonly ILogger<TableCacheRepository> _logger;
         readonly IMemoryCache _memoryCache = null;
         readonly MemoryCacheEntryOptions _memoryCacheEntryOptions = null;
-        object _lockObj = new object();
-        bool __lockWasTaken = false;
 
         public TableCacheRepository(IMemoryCache memoryCache, IServiceScopeFactory serviceScopeFactory)
             : base(serviceScopeFactory)
@@ -25,6 +23,8 @@ namespace SyncDataSample.Repositories
             {
                 _logger = scope.ServiceProvider.GetRequiredService<ILogger<TableCacheRepository>>();
             }
+
+            GetTableDTOAsync().Wait();
         }
 
         public override async Task<IEnumerable<TableDTO>> GetTableDTOAsync()
@@ -34,10 +34,9 @@ namespace SyncDataSample.Repositories
             if (!_memoryCache.TryGetValue<IEnumerable<TableDTO>>(cacheKey, out IEnumerable<TableDTO> result))
             {
                 _logger.LogInformation("[] Get Data from DB");
-                //System.Threading.Monitor.Enter(_lockObj, ref __lockWasTaken);
+              
                 result = await base.GetTableDTOAsync();
                 if (result != null) _memoryCache.Set(cacheKey, result, _memoryCacheEntryOptions);
-                //if (__lockWasTaken) System.Threading.Monitor.Exit(_lockObj);
             }
 
             return result;
@@ -45,6 +44,7 @@ namespace SyncDataSample.Repositories
 
         public void Remove(string key)
         {
+            _logger.LogInformation("[] Remove");
             _memoryCache.Remove(key);
         }
     }
